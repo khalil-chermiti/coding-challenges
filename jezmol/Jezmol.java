@@ -23,15 +23,20 @@ sealed interface Token
   }
 }
 
-record JsonObject() {
+record JsonObject(List<Pair> pairs) {
+}
+
+record Pair(String key, Object value) {
 }
 
 public class Jezmol {
+  static List<Token> tokens = new ArrayList<>();
 
   public static void main(String[] args) {
     try {
       String content = Files.readString(Path.of(args[0]));
-      if (parse(tokenize(content)) == null) {
+      tokenize(content);
+      if (parse() == null) {
         System.out.println("1");
       } else {
         System.out.println("0");
@@ -41,8 +46,7 @@ public class Jezmol {
     }
   }
 
-  static List<Token> tokenize(String input) throws Exception {
-    List<Token> tokens = new ArrayList<>();
+  static void tokenize(String input) throws Exception {
     int current = 0;
 
     // loop through input
@@ -82,32 +86,61 @@ public class Jezmol {
     }
 
     // parse valid tokens
-
-    return tokens;
   }
 
-  public static JsonObject parse(List<Token> tokens) throws Exception {
-    int currentToken = 0;
+  public static void parseValue() {
+  }
 
-    while (currentToken < tokens.size()) {
-      Token token = tokens.get(currentToken++);
+  static int currentToken = 0;
 
-      return switch (token) {
-        case Token.LeftBrace _ -> {
-          // handle kv properties : if StringToken : curToken++ should be col | }
-          // string : string , string : string ,
+  public static Object parse() throws Exception {
 
-          if (!(tokens.get(currentToken) instanceof Token.RightBrace)) {
-            throw new Exception("expected right brace");
+    Token token = tokens.get(currentToken++);
+
+    return switch (token) {
+      case Token.LeftBrace lb -> {
+        JsonObject jo = new JsonObject(new ArrayList<>());
+        // handle kv properties : if StringToken : curToken++ should be col | }
+        // string : string , string : string ,
+
+        while (!(tokens.get(currentToken) instanceof Token.RightBrace)) {
+          if(currentToken >= tokens.size()){
+            throw new Exception("EOF exception");
           }
-          currentToken++;
-          yield new JsonObject();
+
+          // test for key (must be of string type)
+          if (tokens.get(currentToken) instanceof  Token.StringToken) {
+            Token.StringToken key = (Token.StringToken) tokens.get(currentToken);
+            currentToken++; // consume the key
+            // test for column
+            if (!(tokens.get(currentToken) instanceof Token.ColumnToken))
+              throw new Exception("expected a key of type string");
+            currentToken++;
+
+            // test for value recursively
+            var value = parse();
+
+            // test comma
+            if (tokens.get(currentToken) instanceof Token.CommaToken) {
+              currentToken++;
+            }
+
+          } else {
+            throw new Exception("expected a key of type string");
+          }
+
         }
-        default -> {
-          throw new Exception("unexpected token");
+
+        if (!(tokens.get(currentToken) instanceof Token.RightBrace)) {
+          throw new Exception("expected right brace");
         }
-      };
-    }
+        currentToken++;
+        yield new JsonObject();
+      }
+      default -> {
+        throw new Exception("unexpected token");
+      }
+    };
 
     return null;
   }
