@@ -1,0 +1,13 @@
+{
+  "name": "John Doe",
+  "age": 30,
+  "isStudent": false,
+  "grades": [95.5, 87.0, 91.2],
+  "address": {
+    "street": "123 Main St",
+    "city": "Boston",
+    "zipCode": "02101"
+  },
+  "hobbies": ["reading", "hiking", null],
+  "spouse": null
+}
