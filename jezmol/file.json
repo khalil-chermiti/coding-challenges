@@ -2,12 +2,13 @@
   "name": "John Doe",
   "age": 30,
   "isStudent": false,
+  "isMaried": true,
+  "spouse": null,
   "grades": [95.5, 87.0, 91.2],
   "address": {
-    "street": "123 Main St",
+    "street": "12 Main St",
     "city": "Boston",
     "zipCode": "02101"
   },
-  "hobbies": ["reading", "hiking", null],
-  "spouse": null
+  "hobbies": ["reading", "hiking", null]
 }
