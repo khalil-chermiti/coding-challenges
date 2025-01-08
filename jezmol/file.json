@@ -4,11 +4,11 @@
   "isStudent": false,
   "isMaried": true,
   "spouse": null,
-  "grades": [95.5, 87.0, 91.2],
   "address": {
     "street": "12 Main St",
     "city": "Boston",
     "zipCode": "02101"
   },
+  "grades": [95.5, 87.0, 91.2],
   "hobbies": ["reading", "hiking", null]
 }
